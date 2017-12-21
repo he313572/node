@@ -1,0 +1,30 @@
+th,
+td {
+    text-align: center;
+}
+
+.btn-samll {
+    margin: 0 10px;
+}
+
+.mask {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 888;
+    display: none;
+}
+
+.update-panel {
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 15%;
+    padding: 20px;
+}
+
+.current {
+    background: #ccc!important;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>完善资料</title>
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/prefect.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <script src="/js/uploadPreview.min.js"></script>
+</head>
+
+<body>
+    <% include header.ejs %>
+        <section class="container">
+            <div class="row">
+                <fieldset class="col-md-8 col-md-offset-2">
+                    <legend>完善用户资料</legend>
+                    <form action="/main/user/prefectInfo" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>昵称</label>
+                            <input type="text" name="nickname" class="form-control" placeholder="nickname">
+                        </div>
+                        <div class="form-group">
+                            <label>头像上传</label>
+                            <div id="imgdiv">
+                                <img id="showImg" src="/img/defalut.jpg" />
+                                <input type="file" id="up_img" name="userIcon" />
+                            </div>
+                        </div>
+                        <a type="button" href="javascript:history.go(-1)" class="btn btn-default">取消</a>
+                        <button type="submit" class="btn btn-default">提交</button>
+                    </form>
+                </fieldset>
+            </div>
+        </section>
+</body>
+<script>
+    window.onload = function() {
+        new uploadPreview({
+            UpBtn: "up_img",
+            DivShow: "imgdiv",
+            ImgShow: "showImg"
+        });
+    }
+</script>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstarpValidate/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/bootstarp/js/bootstrap.min.js"></script>
+    <script src="/bootstarpValidate/js/bootstrapValidator.min.js"></script>
+    <script src="/bootstarpValidate/js/zh_CN.js"></script>
+</head>
+
+<body>
+    <% include header.ejs %>
+        <section class="container">
+            <div class="row">
+                <fieldset class="col-md-5">
+                    <legend>主页</legend>
+                    <form method="post" action="/main/student/add" id="addForm" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label for="name-input">姓名</label>
+                            <input type="text" id="name-input" name="name" class="form-control" placeholder="姓名" required data-bv-notempty-message="必填项">
+                        </div>
+                        <div class="form-group">
+                            <label for="age-input">年龄</label>
+                            <input type="text" id="age-input" name="age" class="form-control" placeholder="年龄" required data-bv-notempty-message="必填项" pattern="^[1-9][0-9]$" data-bv-regexp-message="年龄输入不符合">
+                        </div>
+                        <div class="form-group">
+                            <label for="score-input">学分</label>
+                            <input type="text" id="score-input" name="score" class="form-control" placeholder="学分" required data-bv-notempty-message="必填项" pattern="^[1-9][0-9]$" data-bv-regexp-message="学分输入不符合">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">性别</label>
+                            <label class="radio-inline">
+                            <input type="radio" checked name="sex" id="inlineRadio1" value="女"> 女
+                        </label>
+                            <label class="radio-inline">
+                            <input type="radio" name="sex" id="inlineRadio2" value="男"> 男
+                        </label>
+                        </div>
+                        <button type="reset" class="btn btn-default">重置</button>
+                        <button type="submit" class="btn btn-default">添加</button>
+                    </form>
+                </fieldset>
+                <fieldset class="col-md-5 col-md-offset-2">
+                    <legend>条件查找</legend>
+                    <form method="post" action="/main/student/add" id="addForm" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label for="name-input">姓名</label>
+                            <input type="text" id="name-input" name="name" class="form-control" placeholder="姓名" required data-bv-notempty-message="必填项">
+                        </div>
+                        <div class="form-group">
+                            <label for="age-input">年龄</label>
+                            <input type="text" id="age-input" name="age" class="form-control" placeholder="年龄" required data-bv-notempty-message="必填项" pattern="^[1-9][0-9]$" data-bv-regexp-message="年龄输入不符合">
+                        </div>
+                        <div class="form-group">
+                            <label for="score-input">学分</label>
+                            <input type="text" id="score-input" name="score" class="form-control" placeholder="学分" required data-bv-notempty-message="必填项" pattern="^[0-9][0-9]$" data-bv-regexp-message="学分输入不符合">
+                        </div>
+                        <button type="submit" class="btn btn-default">查找</button>
+                    </form>
+                </fieldset>
+            </div>
+            <div class="row">
+                <fieldset style="margin-top:20px;">
+                    <legend>XX信息</legend>
+                    <table class="table table-hover table-bordered" style="font-size:16px;">
+                        <tr>
+                            <th>编号</th>
+                            <th>姓名</th>
+                            <th>年龄</th>
+                            <th>性别</th>
+                            <th>学分</th>
+                            <th>操作</th>
+                        </tr>
+                        <% for(var i=0;i<page.result.length;i++) { %>
+                            <tr>
+                                <td>
+                                    <%= i+1 %>
+                                </td>
+                                <td>
+                                    <%= page.result[i].name %>
+                                </td>
+                                <td>
+                                    <%= page.result[i].age %>
+                                </td>
+                                <td>
+                                    <%= page.result[i].sex %>
+                                </td>
+                                <td>
+                                    <%= page.result[i].score %>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-default" onclick="update('<%= page.result[i].id %>','<%= page.result[i].name %>','<%= page.result[i].age %>','<%= page.result[i].score %>','<%= page.result[i].sex %>')">修改</button>
+                                    <a class="btn btn-primary btn-samll" href="/main/student/delete/<%= page.result[i].id %>" role="button">删除</a>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </table>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <% if(page.currentPage > 1){ %>
+                                <li>
+                                    <a href="/main/student/<%= page.currentPage-1%>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <%}%>
+                                    <% for(var i = page.start;i<=page.end;i++){%>
+                                        <li>
+                                            <a href="/main/student/<%= i %>" class=<% if(page.currentPage==i ){%>
+                                            'current'
+                                            <%}%>
+                                                >
+                                                <%= i %>
+                                        </a>
+                                        </li>
+                                        <%}%>
+                                            <% if(page.currentPage < page.totalPage) {%>
+                                                <li>
+                                                    <a href="/main/student/<%= page.currentPage+1%>" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                                <%}%>
+                        </ul>
+                    </nav>
+                </fieldset>
+            </div>
+        </section>
+        <div class="mask">
+            <div class="panel panel-default update-panel">
+                <div class="panel-heading">修改学生信息</div>
+                <div class="panel-body">
+                    <form method="post" action="/main/student/update">
+                        <input id="id-update" type="hidden" name="id">
+                        <div class="form-group">
+                            <label for="name-update">姓名</label>
+                            <input type="text" id="name-update" name="name" class="form-control" placeholder="姓名" style="width:300px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="age-update">年龄</label>
+                            <input type="text" id="age-update" name="age" class="form-control" placeholder="年龄" style="width:300px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="score-update">学分</label>
+                            <input type="text" id="score-update" name="score" class="form-control" placeholder="学分" style="width:300px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">性别</label>&#160;&#160;
+                            <label class="radio-inline">
+                            <input type="radio" class="sex-radio" name="sex" id="inlineRadio2" value="男">男
+                        </label>
+                            <label class="radio-inline">
+                            <input type="radio" class="sex-radio" checked name="sex" id="inlineRadio1" value="女">女
+                        </label>
+                        </div>
+                        <button type="submit" class="btn btn-default">修改</button>
+                        <button type="button" class="btn btn-default" onclick="cancel()">取消</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+</body>
+<script>
+    var update = function(id, name, age, score, sex) {
+        $('.mask').css('display', 'block');
+        $('#id-update').val(id);
+        $('#name-update').val(name);
+        $('#age-update').val(age);
+        $('#score-update').val(score);
+        $('.sex-radio').each(function(index, ele) {
+            $(this).removeAttr('checked');
+            if (this.value === sex) {
+                $(this).attr('checked', 'true');
+            }
+        });
+    }
+    var cancel = function() {
+        $('.mask').css('display', 'none');
+    }
+    $(function() {
+        $('#addForm').bootstrapValidator({})
+    });
+</script>
+
+</html>;

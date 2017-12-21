@@ -1,0 +1,26 @@
+ .form-container {
+     margin-top: 80px;
+ }
+
+ 
+ #imgdiv {
+     position: relative;
+     width: 150px;
+     height: 150px;
+     border: 1px solid #cdcdcd;
+     z-index: 1
+ }
+ 
+ #up_img {
+     width: 100%;
+     height: 100%;
+     opacity: 0;
+ }
+ 
+ #showImg {
+     position: absolute;
+     left: 0;
+     top: 0;
+     width: 100%;
+     height: 100%;
+ }

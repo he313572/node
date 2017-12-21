@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="App">
+<style>
+
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>百思</title>
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/baisi.css">
+    <link rel="stylesheet" href="/dropload/dropload.css">
+</head>
+
+<body>
+    <div class="outer">
+        <% include header.ejs %>
+            <section class="container inner" ng-controller="newsController">
+                <div class="row">
+                    <div class="jumbotron jum-head col-md-12">
+                        <h3>百思不得姐</h3>
+                        <p>
+                            <span class="label label-default">视频</span>
+                            <span class="label label-primary">图片</span>
+                            <span class="label label-success">段子</span>
+                            <span class="label label-info">声音</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="news-panel col-md-12" ng-cloak ng-repeat="item in items">
+                        <div class="news-head row">
+                            <img src="{{item.profile_image}}" alt="">
+                            <div>
+                                <p>{{item.name}}</p>
+                                <p>{{item.create_time}}</p>
+                            </div>
+                        </div>
+                        <div class="news-body row">
+                            {{item.text}}
+                        </div>
+                    </div>
+                </div>
+            </section>
+    </div>
+</body>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/angular.min.js"></script>
+<script src="/dropload/dropload.min.js"></script>
+<script>
+    var App = angular.module('App', []);
+    App.controller('newsController', ['$http', '$timeout', '$scope', function ($http, $timeout, $scope) {
+        $scope.page = 1;
+        var dropload = $('.inner').dropload({
+            loadDownFn: function (me) {
+                $http({
+                    method: 'GET',
+                    url: '/baisi/list?page=' + $scope.page + '&maxtime=' + $scope.maxtime,
+                }).then(function (res) {
+                    $timeout(function () {
+                        if ($scope.items) {
+                            $scope.items.concat(res.data.list);
+                        } else {
+                            $scope.items = res.data.list;
+                        }
+                        $scope.page++;
+                        $scope.maxtime = res.data.info.maxtime;
+                        console.log($scope.maxtime)
+                        console.log($scope.items)
+                        console.log($scope.page)
+                        dropload.resetload();
+                    }, 1000);
+                }, function () {
+                    alert('Ajax error!');
+                    dropload.resetload();
+                });
+            }
+        });
+    }]);
+</script>
+
+</html>

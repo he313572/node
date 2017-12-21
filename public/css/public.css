@@ -1,0 +1,13 @@
+body {
+    padding-top: 120px;
+}
+footer{
+    padding: 0 10px;
+}
+.usericon{
+    width:25px;
+    height:25px;
+    border-radius: 50%;
+    vertical-align: top;
+    margin-left: 5px;
+}

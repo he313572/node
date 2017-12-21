@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="App">
+
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/bootstarp/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/chat.css">
+</head>
+
+<body>
+    <% include header.ejs %>
+        <section class="container">
+            <div class="alert alert-danger row" role="alert" id="danger">欢迎来到聊天室！</div>
+            <div class="row">
+                <div class="panel panel-default col-md-2">
+                    <div class="panel-heading row">
+                        <h3 class="panel-title">在线用户</h3>
+                    </div>
+                    <div class="panel-body user-panel" ng-controller="chatController" id="ngpanel">
+                        <div class="online-user" ng-cloak ng-repeat="online in onlines">
+                            <span ng-dblclick="select()" class="glyphicon glyphicon-user user-name" aria-hidden="true">&#160;{{online}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default col-md-9 col-md-offset-1">
+                    <div class="panel-heading row" ng-controller="chatController">
+                        <h3 class="panel-title">
+                            <span id="to-user" class="label label-info">聊天窗口
+                                <span>
+                        </h3>
+                    </div>
+                    <div class="panel-body chat-panel" id="chat-window">
+                    </div>
+                    <div class="panel-footer" ng-controller="chatController">
+                        <textarea name="" id="send-tarea" cols="30" rows="3" class="form-control" placeholder="发送消息给好友..." ng-model="sendMsg">{{sendMsg}}</textarea>
+                        <br>
+                        <button type="button" ng-click="send()" class="btn btn-success">发送</button>&#160;&#160; &#160;&#160;
+                        <button type="button" ng-click="clear()" class="btn btn-info">清空</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+</body>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/angular.min.js"></script>
+<script>
+    var message = {
+        from: '<%= user.username %>'
+    }
+    var App = angular.module('App', []);
+    App.controller('chatController', ['$scope', '$timeout', function ($scope, $timeout) {
+        $scope.sendMsg = null;
+        $scope.select = function () {
+            if (this.online == '<%= user.username %>') {
+                $('#danger').text('怎么能和自己聊天呢！O(∩_∩)O');
+                $timeout(function () {
+                    $('#danger').text('欢迎来到聊天室！');
+                }, 1500);
+                return;
+            };
+            message.to = this.online;
+            $('#to-user').text('和' + this.online + '聊天中...');
+        }
+        $scope.send = function () {
+            if (!message.to) {
+                $('#danger').text('你还没有选择聊天的好友呢！(*^__^*)');
+                $timeout(function () {
+                    $('#danger').text('欢迎来到聊天室！');
+                }, 1500);
+                return;
+            }
+            if (!$scope.sendMsg) {
+                $('#danger').text('请填写发送信息再发送哦！(*^__^*)');
+                $timeout(function () {
+                    $('#danger').text('欢迎来到聊天室！');
+                }, 1500);
+                return;
+            }
+            message.info = $scope.sendMsg;
+            socket.send(JSON.stringify(message));
+            var from = '<div class="from-msg"><span class="label label-success">你说：</span>' +
+                message.info +
+                '</div>';
+            $('#chat-window').append(from);
+            message.info = null;
+            $scope.sendMsg = null;
+        }
+        $scope.clear = function () {
+            $('#send-tarea').val('');
+        }
+    }])
+    var socket = io('/?username=<%= user.username %>');
+    socket.on('connect', function () {
+        socket.on('message', function (msg) {
+            var obj = JSON.parse(msg);
+            var to = '<div class="from-msg"><span class="label label-info">' + obj.from +
+                '说：' +
+                '</span>' + obj.info + '</div>';
+            $('#chat-window').append(to);
+        })
+        socket.on('onlines', function (msg) {
+            var ngpanel = $('#ngpanel')[0];
+            var scope = angular.element(ngpanel).scope();
+            scope.onlines = msg;
+            scope.$apply();
+        });
+    })
+</script>
+
+</html>
