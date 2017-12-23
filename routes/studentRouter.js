@@ -12,23 +12,25 @@ exports.findStudent = (req, res) => {
         });
     })
 }
-exports.addStudent = (req, res) => {
+exports.addStudent = (req, res, next) => {
+    console.log(next);
     Student.addStudent(req.body, (err, result) => {
         if (err) {
             res.send(err);
             return;
         }
-        res.redirect('/main/student/');
+        res.redirect('/main/student/find/1');
     })
 }
-exports.deleteStudent = (req, res) => {
+exports.deleteStudent = (req, res, next) => {
+    console.log('next=' + next);
     let id = req.params.id;
     Student.deleteById(id, (err, result) => {
         if (err) {
             res.send(err);
             return;
         }
-        res.redirect('/main/student/');
+        res.redirect('/main/student/find/1');
     })
 }
 exports.updateStudent = (req, res) => {
@@ -40,6 +42,6 @@ exports.updateStudent = (req, res) => {
             res.send(err);
             return;
         }
-        res.redirect('/main/student/');
+        res.redirect('/main/student/find/1');
     })
 }

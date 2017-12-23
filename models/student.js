@@ -1,14 +1,14 @@
-var mongoose = require('mongoose');
-var db = require('./db');
-var uuid = require('uuid/v4');
-var studentSchema = new mongoose.Schema({
-    id: String,
-    name: String,
-    age: Number,
-    score: Number,
-    sex: String
-})
-studentSchema.statics.findStudentPage = function(currentPage, callback) {
+var mongoose = require('mongoose'),
+    db = require('./db'),
+    uuid = require('uuid/v4'),
+    studentSchema = new mongoose.Schema({
+        id: String,
+        name: String,
+        age: Number,
+        score: Number,
+        sex: String
+    })
+studentSchema.statics.findStudentPage = function (currentPage, callback) {
     let page = {
         currentPage: currentPage,
         totalPage: 0,
@@ -48,16 +48,16 @@ studentSchema.statics.findStudentPage = function(currentPage, callback) {
         });
     });
 }
-studentSchema.statics.addStudent = function(object, callback) {
+studentSchema.statics.addStudent = function (object, callback) {
     object.id = uuid().replace('-', '');
     return this.model('Student').create(object, callback);
 }
-studentSchema.statics.deleteById = function(id, callback) {
+studentSchema.statics.deleteById = function (id, callback) {
     return this.model('Student').remove({
         'id': id
     }, callback);
 }
-studentSchema.statics.updateById = function(id, object, callback) {
+studentSchema.statics.updateById = function (id, object, callback) {
     return this.model('Student').updateOne({
         'id': id
     }, object, {

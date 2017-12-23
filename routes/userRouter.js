@@ -1,26 +1,38 @@
-var User = require('../models/user');
-var Formidable = require('formidable');
-var crypto = require('crypto');
-var path = require('path');
-var uuid = require('uuid/v4');
-var sd = require('silly-datetime');
-var fs = require('fs');
-var gm = require('gm')
+var User = require('../models/user'),
+    Formidable = require('formidable'),
+    crypto = require('crypto'),
+    path = require('path'),
+    uuid = require('uuid/v4'),
+    sd = require('silly-datetime'),
+    fs = require('fs'),
+    gm = require('gm'),
+    acl = require('../models/nacl');
 var md5 = (password) => {
     let _md5 = crypto.createHash('md5');
     return _md5.update(password).digest('base64');
 }
 exports.userRegister = (req, res) => {
     let object = req.body;
-    object.id = uuid().replace('-', '');
     object.password = md5(md5(object.password));
     delete object.confirmPassword;
-    User.addUser(object, err => {
+    User.addUser(object, (err, result) => {
         if (err) {
             res.send(err);
             return;
         }
-        res.redirect('/html/login.html');
+        let role = '';
+        if (object.username === 'admin') {
+            role = 'admin'
+        } else {
+            role = 'member'
+        }
+        acl.addUserRoles(result._id.toString(), role, err => {
+            if (err) {
+                res.send(err);
+                return;
+            }
+            res.redirect('/');
+        })
     })
 }
 exports.prefectInfo = (req, res) => {
@@ -75,7 +87,7 @@ exports.userLogin = (req, res) => {
                 });
             }
             req.session.user = result;
-            res.redirect('/main/student/');
+            res.redirect('/main/student/find/1');
         } else {
             res.send('用户名或密码不正确');
         }
@@ -84,7 +96,7 @@ exports.userLogin = (req, res) => {
 exports.signOut = (req, res) => {
     delete req.session.user;
     req.session.destroy(err => {
-        res.redirect('/html/login.html');
+        res.redirect('/');
     })
 }
 exports.autoLogin = (req, res, next) => {

@@ -1,16 +1,16 @@
-var mongoose = require('mongoose');
-var db = require('./db');
-var userSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    email: String,
-    phone: String,
-    id: String,
-    nickname: String,
-    iconPath: String
-})
+var mongoose = require('mongoose'),
+    db = require('./db'),
+    userSchema = new mongoose.Schema({
+        username: String,
+        password: String,
+        email: String,
+        phone: String,
+        id: String,
+        nickname: String,
+        iconPath: String
+    });
 userSchema.statics.addUser = function (object, callback) {
-    this.model('User').create(object, callback)
+    this.model('User').create(object, callback);
 }
 userSchema.statics.findUserByUsernameAndPassword = function (condition, callback) {
     this.model('User').findOne(condition, callback);

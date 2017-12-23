@@ -1,14 +1,15 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var studentRouter = require('./routes/studentRouter');
-var userRouter = require('./routes/userRouter')
-var chatRouter = require('./routes/chatRouter');
-var baisiRouter = require('./routes/baisiRouter')
-var cookieParser = require('cookie-parser');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    session = require('express-session'),
+    acl = require('./models/nacl'),
+    studentRouter = require('./routes/studentRouter'),
+    userRouter = require('./routes/userRouter'),
+    chatRouter = require('./routes/chatRouter'),
+    baisiRouter = require('./routes/baisiRouter'),
+    cookieParser = require('cookie-parser'),
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io')(server);
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
@@ -23,11 +24,12 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use('/main/', userRouter.autoLogin);
 app.use('/main/', userRouter.loginInterceptor);
-app.get('/main/student/', studentRouter.findStudent);
-app.post('/main/student/add', studentRouter.addStudent);
-app.get('/main/student/delete/:id', studentRouter.deleteStudent);
-app.post('/main/student/update', studentRouter.updateStudent);
-app.get('/main/student/:currentPage', studentRouter.findStudent);
+
+app.get('/main/student/find/:currentPage', acl.middleware(3, req => req.session.user._id), studentRouter.findStudent);
+app.post('/main/student/add', acl.middleware(null, req => req.session.user._id), studentRouter.addStudent);
+app.get('/main/student/delete/:id', acl.middleware(3, req => req.session.user._id), studentRouter.deleteStudent);
+app.post('/main/student/update', acl.middleware(null, req => req.session.user._id), studentRouter.updateStudent);
+
 app.post('/user/register', userRouter.userRegister);
 app.post('/user/login', userRouter.userLogin);
 app.get('/user/out', userRouter.signOut);
