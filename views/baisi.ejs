@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="/bootstarp/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/baisi.css">
     <link rel="stylesheet" href="/dropload/dropload.css">
+    <script src="/vue/vue.min.js"></script>
+    <script src="/vue/vue-resource.js"></script>
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/dropload/dropload.min.js"></script>
 </head>
 
 <body>
@@ -31,10 +35,10 @@
                         </p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="news-panel col-md-12" ng-cloak ng-repeat="item in items">
+                <div class="row" id="ele">
+                    <div class="news-panel col-md-12" v-cloak v-for="item in items">
                         <div class="news-head row">
-                            <img src="{{item.profile_image}}" alt="">
+                            <img :src="item.profile_image" alt="">
                             <div>
                                 <p>{{item.name}}</p>
                                 <p>{{item.create_time}}</p>
@@ -48,39 +52,50 @@
             </section>
     </div>
 </body>
-<script src="/js/jquery-3.2.1.min.js"></script>
-<script src="/js/angular.min.js"></script>
-<script src="/dropload/dropload.min.js"></script>
+
 <script>
-    var App = angular.module('App', []);
-    App.controller('newsController', ['$http', '$timeout', '$scope', function ($http, $timeout, $scope) {
-        $scope.page = 1;
-        var dropload = $('.inner').dropload({
-            loadDownFn: function (me) {
-                $http({
-                    method: 'GET',
-                    url: '/baisi/list?page=' + $scope.page + '&maxtime=' + $scope.maxtime,
-                }).then(function (res) {
-                    $timeout(function () {
-                        if ($scope.items) {
-                            $scope.items.concat(res.data.list);
-                        } else {
-                            $scope.items = res.data.list;
+    window.onload = function () {
+        var vue = new Vue({
+            el: '#ele',
+            data: {
+                items: null,
+                page: 0,
+                maxtime: 0
+            },
+            methods: {
+                dropload: function () {
+                    var _this = this;
+                    var dropload = $('.inner').dropload({
+                        loadDownFn: function (me) {
+                            _this.$http.get('/baisi/list', {
+                                page: _this.page,
+                                maxtime: _this.maxtime
+                            }).then(function (res) {
+                                setTimeout(function () {
+                                    if (_this.items) {
+                                        _this.items.concat(res.data.list);
+                                        console.log(_this.items);
+                                    } else {
+                                        _this.items = res.data.list;
+                                    }
+                                    _this.page++;
+                                    _this.maxtime = res.data.info.maxtime;
+                                    dropload.resetload();
+                                }, 1000);
+                            }, function (res) {
+                                alert('Ajax error!');
+                                dropload.resetload();
+                            })
                         }
-                        $scope.page++;
-                        $scope.maxtime = res.data.info.maxtime;
-                        console.log($scope.maxtime)
-                        console.log($scope.items)
-                        console.log($scope.page)
-                        dropload.resetload();
-                    }, 1000);
-                }, function () {
-                    alert('Ajax error!');
-                    dropload.resetload();
-                });
+                    })
+                }
+            },
+            mounted: function () {
+                console.log('初次加载数据');
+                this.dropload();
             }
-        });
-    }]);
+        })
+    }
 </script>
 
 </html>

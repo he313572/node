@@ -1,7 +1,8 @@
 var request = require('request');
 exports.getBaisiList = (req, res) => {
-    let type = req.params.type || 29;
-    let page = req.params.page || 1;
+    console.log(req.query);
+    let type = req.query.type || 29;
+    let page = req.query.page || 1;
     let maxtime = req.params.maxtime || 0;
     let options = {
         headers: {
@@ -13,6 +14,7 @@ exports.getBaisiList = (req, res) => {
     };
     request(options, (error, response, data) => {
         if (!error && response.statusCode == 200) {
+            console.log(data.info.maxtime);
             res.json(data)
         }
     })

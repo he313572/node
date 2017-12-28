@@ -107,14 +107,14 @@
                         <ul class="pagination">
                             <% if(page.currentPage > 1){ %>
                                 <li>
-                                    <a href="/main/student/<%= page.currentPage-1%>" aria-label="Previous">
+                                    <a href="/main/student/find/<%= page.currentPage-1%>" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <%}%>
                                     <% for(var i = page.start;i<=page.end;i++){%>
                                         <li>
-                                            <a href="/main/student/<%= i %>" class=<% if(page.currentPage==i ){%>
+                                            <a href="/main/student/find/<%= i %>" class=<% if(page.currentPage==i ){%>
                                             'current'
                                             <%}%>
                                                 >
@@ -124,7 +124,7 @@
                                         <%}%>
                                             <% if(page.currentPage < page.totalPage) {%>
                                                 <li>
-                                                    <a href="/main/student/<%= page.currentPage+1%>" aria-label="Next">
+                                                    <a href="/main/student/find/<%= page.currentPage+1%>" aria-label="Next">
                                                         <span aria-hidden="true">&raquo;</span>
                                                     </a>
                                                 </li>

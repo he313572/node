@@ -23,7 +23,6 @@ exports.addStudent = (req, res, next) => {
     })
 }
 exports.deleteStudent = (req, res, next) => {
-    console.log('next=' + next);
     let id = req.params.id;
     Student.deleteById(id, (err, result) => {
         if (err) {
